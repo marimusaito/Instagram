@@ -15,6 +15,8 @@ class PostTableViewCell: UITableViewCell {
     @IBOutlet weak var likeLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var captionLabel: UILabel!
+    @IBOutlet weak var messageButton: UIButton!
+    @IBOutlet weak var messageLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -57,6 +59,27 @@ class PostTableViewCell: UITableViewCell {
             let buttonImage = UIImage(named: "like_none")
             self.likeButton.setImage(buttonImage, for: .normal)
         }
+        
+        // メッセージの表示
+        //self.messageLabel.text = "\(postData.message!)"
+        
+        var messageLast: String?
+        messageLast = postData.message.first
+        print(messageLast)
+
+
+        
+        if messageLast == nil {
+            messageLast = ""
+        }
+        
+        let unwrapped = messageLast!
+        
+        print (unwrapped)
+        
+        self.messageLabel.text = unwrapped
+            
+        
     }
 
     

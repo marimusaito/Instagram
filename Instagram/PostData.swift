@@ -16,6 +16,8 @@ class PostData: NSObject {
     var date: Date?
     var likes: [String] = []
     var isLiked: Bool = false
+    var message: [String] = []
+    var usrname: [String] = []
 
     init(document: QueryDocumentSnapshot) {
         self.id = document.documentID
@@ -29,6 +31,10 @@ class PostData: NSObject {
         let timestamp = postDic["date"] as? Timestamp
         self.date = timestamp?.dateValue()
 
+        if let message = postDic["message"] as? [String] {
+            self.message = message
+        }
+        
         if let likes = postDic["likes"] as? [String] {
             self.likes = likes
         }
@@ -39,5 +45,15 @@ class PostData: NSObject {
                 self.isLiked = true
             }
         }
+        
+        
+        // メッセージが空なら何も表示しない
+        //if self.message == nil {
+        //        self.message = ""
+        //}
+        
+        
+        
+        
     }
 }

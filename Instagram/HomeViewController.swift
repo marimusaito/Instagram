@@ -78,6 +78,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // セル内のボタンのアクションをソースコードで設定する
         cell.likeButton.addTarget(self, action:#selector(handleButton(_:forEvent:)), for: .touchUpInside)
         
+        cell.messageButton.addTarget(self, action:#selector(handleNewButton(_:forEvent:)), for: .touchUpInside)
+        
         
         
         return cell
@@ -86,15 +88,15 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     // セル内のボタンがタップされた時に呼ばれるメソッド
     @objc func handleButton(_ sender: UIButton, forEvent event: UIEvent) {
         print("DEBUG_PRINT: likeボタンがタップされました。")
-
+        
         // タップされたセルのインデックスを求める
         let touch = event.allTouches?.first
         let point = touch!.location(in: self.tableView)
         let indexPath = tableView.indexPathForRow(at: point)
-
+        
         // 配列からタップされたインデックスのデータを取り出す
         let postData = postArray[indexPath!.row]
-
+        
         // likesを更新する
         if let myid = Auth.auth().currentUser?.uid {
             // 更新データを作成する
@@ -111,6 +113,64 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             postRef.updateData(["likes": updateValue])
         }
     }
+    
+    @objc func handleNewButton(_ sender: UIButton, forEvent event: UIEvent) {
+        print("DEBUG_PRINT: messageボタンがタップされました。")
+        
+        // タップされたセルのインデックスを求める
+        let touch = event.allTouches?.first
+        let point = touch!.location(in: self.tableView)
+        let indexPath = tableView.indexPathForRow(at: point)
+        
+        // 配列からタップされたインデックスのデータを取り出す
+        let postData = postArray[indexPath!.row]
+        
+        var alertTextField: UITextField?
+        
+        let alert = UIAlertController(
+            title: "Edit Name",
+            message: "Enter new name",
+            preferredStyle: UIAlertController.Style.alert)
+        alert.addTextField(
+            configurationHandler: {(textField: UITextField!) in
+                alertTextField = textField
+                textField.text = ""
+                // textField.placeholder = "Mike"
+                // textField.isSecureTextEntry = true
+        })
+        alert.addAction(
+            UIAlertAction(
+                title: "Cancel",
+                style: UIAlertAction.Style.cancel,
+                handler: nil))
+        alert.addAction(
+            UIAlertAction(
+                title: "OK",
+                style: UIAlertAction.Style.default) { _ in
+                    if let text = alertTextField?.text {
+                        
+                        let usrName = Auth.auth().currentUser?.displayName
+                        
+                        let updateMessage = "\(text) : \(usrName!)"
+                        
+                        // 更新データを作成する
+                        var updateValue: FieldValue
+                        // textを追加する更新データを作成
+                        updateValue = FieldValue.arrayUnion([updateMessage])
+
+                        // messageに更新データを書き込む
+                        let postRef = Firestore.firestore().collection(Const.PostPath).document(postData.id)
+                        postRef.updateData(["message": updateValue])
+                    }
+            }
+        )
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+    
+    
+    
     
     /*
      // MARK: - Navigation
